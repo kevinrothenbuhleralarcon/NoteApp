@@ -22,6 +22,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:notes='@{viewModel.notes}'
             tools:listitem="@layout/note_list_item_linear"
             tools:itemCount="50"/>
 
@@ -35,6 +36,7 @@
             android:src="@android:drawable/ic_input_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:viewModel='@{viewModel}'
             app:tint="@android:color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

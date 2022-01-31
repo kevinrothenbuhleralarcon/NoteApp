@@ -1,5 +1,6 @@
 package ch.kra.noteapp.notefeature.presentation.addupdatenote
 
+import android.util.Log
 import androidx.lifecycle.*
 import ch.kra.noteapp.core.UIEvent
 import ch.kra.noteapp.notefeature.domain.model.Note
@@ -18,22 +19,20 @@ class AddUpdateNoteViewModel(
     private val _isNewNote = MutableLiveData(true)
     val isNewNote: LiveData<Boolean> get() = _isNewNote
 
-    private val _noteTitle = MutableLiveData("")
-    val noteTitle: LiveData<String> get() = _noteTitle
+    val noteTitle = MutableLiveData("")
 
-    private val _noteContent = MutableLiveData("")
-    val noteContent: LiveData<String> get() = _noteContent
+    val noteContent = MutableLiveData("")
 
     private val _uiEvent = Channel<UIEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow().asLiveData()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     fun loadNote(id: Int) {
         if ( id >= 0) {
             viewModelScope.launch {
                 val note = noteRepository.getNoteById(id)
                 note?.let {
-                    _noteTitle.postValue(it.title)
-                    _noteContent.postValue(it.content)
+                    noteTitle.value = it.title
+                    noteContent.value = it.content
                     noteId = it.id
                     _isNewNote.postValue(false)
                 }
@@ -43,17 +42,8 @@ class AddUpdateNoteViewModel(
 
     fun onEvent(event: AddUpdateNoteEvent) {
         when (event) {
-            is AddUpdateNoteEvent.OnContentChanged -> {
-                _noteContent.postValue(event.content)
-            }
-            is AddUpdateNoteEvent.OnTitleChanged -> {
-                _noteTitle.postValue(event.title)
-            }
-            is AddUpdateNoteEvent.OnNavigateBackClicked -> {
-                sendUIEvent(UIEvent.NavigateBack)
-            }
             is AddUpdateNoteEvent.OnSaveNoteClicked -> {
-                _noteTitle.value?.let {
+                noteTitle.value?.let {
                     if (it.isEmpty()) {
                         sendUIEvent(UIEvent.ShowSnackbar(message = "The title can't be empty"))
                         return@let
@@ -66,13 +56,15 @@ class AddUpdateNoteViewModel(
                                 id = noteId
                             )
                         )
-                        sendUIEvent(UIEvent.Navigate())
+                        sendUIEvent(UIEvent.Navigate(
+                            AddUpdateNoteFragmentDirections.actionAddUpdateNoteFragmentToListNoteFragment()
+                        ))
                     }
                 }
             }
             is AddUpdateNoteEvent.OnUpdateNoteClicked -> {
                 noteId?.let {
-                    _noteTitle.value?.let {
+                    noteTitle.value?.let {
                         if (it.isEmpty()) {
                             sendUIEvent(UIEvent.ShowSnackbar(message = "The title can't be empty"))
                             return
@@ -85,7 +77,9 @@ class AddUpdateNoteViewModel(
                                     id = noteId
                                 )
                             )
-                            sendUIEvent(UIEvent.Navigate())
+                            sendUIEvent(UIEvent.Navigate(
+                                AddUpdateNoteFragmentDirections.actionAddUpdateNoteFragmentToListNoteFragment()
+                            ))
                         }
                     }
                 }

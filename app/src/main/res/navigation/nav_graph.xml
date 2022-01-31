@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/listNoteFragment"
         android:name="ch.kra.noteapp.notefeature.presentation.listnote.ListNoteFragment"
-        android:label="fragment_list_note"
+        android:label="Notes"
         tools:layout="@layout/fragment_list_note" >
         <action
             android:id="@+id/action_listNoteFragment_to_addUpdateNoteFragment"
@@ -17,12 +17,15 @@
     <fragment
         android:id="@+id/addUpdateNoteFragment"
         android:name="ch.kra.noteapp.notefeature.presentation.addupdatenote.AddUpdateNoteFragment"
-        android:label="fragment_add_update_note"
+        android:label="Add note"
         tools:layout="@layout/fragment_add_update_note" >
         <action
             android:id="@+id/action_addUpdateNoteFragment_to_listNoteFragment"
             app:destination="@id/listNoteFragment"
             app:popUpTo="@id/listNoteFragment"
             app:popUpToInclusive="true"/>
+        <argument
+            android:name="noteId"
+            app:argType="integer" />
     </fragment>
 </navigation>

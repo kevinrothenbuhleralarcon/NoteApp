@@ -1,14 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".notefeature.presentation.addupdatenote.AddUpdateNoteFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="ch.kra.noteapp.notefeature.presentation.addupdatenote.AddUpdateNoteViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_margin="16dp">
 
-</FrameLayout>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/lbl_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/note_title"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tbx_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text='@={viewModel.noteTitle}'
+            app:layout_constraintTop_toBottomOf="@id/lbl_title"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Test title"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/lbl_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/note_content"
+            app:layout_constraintTop_toBottomOf="@id/tbx_title"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tbx_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text='@={viewModel.noteContent}'
+            app:layout_constraintTop_toBottomOf="@id/lbl_content"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Test content"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_note"
+            android:visibility='@{viewModel.isNewNote() ? View.VISIBLE : View.GONE}'
+            app:bindSaveNote='@{viewModel}'
+            app:layout_constraintTop_toBottomOf="@id/tbx_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update_note"
+            android:visibility='@{viewModel.isNewNote() ? View.GONE : View.VISIBLE}'
+            app:bindSaveNote='@{viewModel}'
+            app:layout_constraintTop_toBottomOf="@id/tbx_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
