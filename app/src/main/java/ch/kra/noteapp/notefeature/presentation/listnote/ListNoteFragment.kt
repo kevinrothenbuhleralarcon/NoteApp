@@ -1,7 +1,6 @@
 package ch.kra.noteapp.notefeature.presentation.listnote
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ import ch.kra.noteapp.NoteApplication
 import ch.kra.noteapp.R
 import ch.kra.noteapp.core.UIEvent
 import ch.kra.noteapp.databinding.FragmentListNoteBinding
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -26,7 +26,7 @@ class ListNoteFragment : Fragment() {
     private var _binding: FragmentListNoteBinding? = null
     private val binding get() = _binding!!
 
-    private val listNoteViewModel by viewModels<ListNoteViewModel> {
+    private val viewModel by viewModels<ListNoteViewModel> {
         ListNoteViewModelFactory((requireActivity().application as NoteApplication).noteRepository)
     }
 
@@ -46,10 +46,10 @@ class ListNoteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            viewModel = listNoteViewModel
+            viewModel = this@ListNoteFragment.viewModel
             lifecycleOwner = viewLifecycleOwner
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
-            recyclerView.adapter = ListNoteAdapter(listNoteViewModel)
+            recyclerView.adapter = ListNoteAdapter(this@ListNoteFragment.viewModel)
         }
         collectUIEvent()
     }
@@ -62,16 +62,21 @@ class ListNoteFragment : Fragment() {
     private fun collectUIEvent() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                listNoteViewModel.uiEvent.collect { event ->
+                viewModel.uiEvent.collect { event ->
                     when (event) {
                         is UIEvent.Navigate -> {
                             findNavController().navigate(event.destination)
                         }
                         is UIEvent.ShowSnackbar -> {
-
-                        }
-                        is UIEvent.NavigateBack -> {
-
+                            val snackbar = Snackbar.make(
+                                binding.root,
+                                event.message,
+                                Snackbar.LENGTH_LONG
+                            )
+                            snackbar.setAction(event.action) {
+                                viewModel.onEvent(ListNoteEvent.UndoDelete)
+                            }
+                            snackbar.show()
                         }
                     }
                 }

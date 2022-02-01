@@ -15,6 +15,7 @@ import ch.kra.noteapp.NoteApplication
 import ch.kra.noteapp.R
 import ch.kra.noteapp.core.UIEvent
 import ch.kra.noteapp.databinding.FragmentAddUpdateNoteBinding
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -59,7 +60,9 @@ class AddUpdateNoteFragment : Fragment() {
                         }
 
                         is UIEvent.ShowSnackbar -> {
-
+                            Snackbar
+                                .make(binding.root, event.message, Snackbar.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }
