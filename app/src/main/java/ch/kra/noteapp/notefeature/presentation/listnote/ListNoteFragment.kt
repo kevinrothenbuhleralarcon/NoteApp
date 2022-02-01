@@ -65,8 +65,6 @@ class ListNoteFragment : Fragment() {
         setIcon(menuItem)
     }
 
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_switch_layout -> {
