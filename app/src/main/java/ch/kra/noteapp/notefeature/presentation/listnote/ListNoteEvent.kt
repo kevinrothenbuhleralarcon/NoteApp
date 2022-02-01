@@ -1,5 +1,6 @@
 package ch.kra.noteapp.notefeature.presentation.listnote
 
+import android.widget.LinearLayout
 import ch.kra.noteapp.notefeature.domain.model.Note
 
 sealed class ListNoteEvent {
@@ -7,4 +8,5 @@ sealed class ListNoteEvent {
     object UndoDelete: ListNoteEvent()
     data class OnNoteClicked(val note: Note): ListNoteEvent()
     object OnAddNoteClicked: ListNoteEvent()
+    data class OnLayoutChanged(val isLinearLayout: Boolean): ListNoteEvent()
 }

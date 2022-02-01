@@ -28,10 +28,6 @@ class AddUpdateNoteFragment : Fragment() {
         AddUpdateNoteViewModel.AddUpdateNoteViewModelFactory((requireActivity().application as NoteApplication).noteRepository)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,7 +57,11 @@ class AddUpdateNoteFragment : Fragment() {
 
                         is UIEvent.ShowSnackbar -> {
                             Snackbar
-                                .make(binding.root, event.message, Snackbar.LENGTH_SHORT)
+                                .make(
+                                    binding.root,
+                                    getString(event.message),
+                                    Snackbar.LENGTH_SHORT
+                                )
                                 .show()
                         }
                     }

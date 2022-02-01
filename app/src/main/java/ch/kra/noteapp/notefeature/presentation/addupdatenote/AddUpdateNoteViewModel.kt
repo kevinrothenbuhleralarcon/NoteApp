@@ -2,6 +2,7 @@ package ch.kra.noteapp.notefeature.presentation.addupdatenote
 
 import android.util.Log
 import androidx.lifecycle.*
+import ch.kra.noteapp.R
 import ch.kra.noteapp.core.UIEvent
 import ch.kra.noteapp.notefeature.domain.model.Note
 import ch.kra.noteapp.notefeature.domain.repository.NoteRepository
@@ -45,7 +46,7 @@ class AddUpdateNoteViewModel(
             is AddUpdateNoteEvent.OnSaveNoteClicked -> {
                 noteTitle.value?.let {
                     if (it.isEmpty()) {
-                        sendUIEvent(UIEvent.ShowSnackbar(message = "The title can't be empty"))
+                        sendUIEvent(UIEvent.ShowSnackbar(message = R.string.title_cant_be_empty))
                         return@let
                     }
                     viewModelScope.launch {
@@ -66,7 +67,7 @@ class AddUpdateNoteViewModel(
                 noteId?.let {
                     noteTitle.value?.let {
                         if (it.isEmpty()) {
-                            sendUIEvent(UIEvent.ShowSnackbar(message = "The title can't be empty"))
+                            sendUIEvent(UIEvent.ShowSnackbar(message = R.string.title_cant_be_empty))
                             return
                         }
                         viewModelScope.launch {

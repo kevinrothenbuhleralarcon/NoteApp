@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import ch.kra.noteapp.R
 import ch.kra.noteapp.core.UIEvent
+import ch.kra.noteapp.notefeature.data.preferences.SettingsDataStore
 import ch.kra.noteapp.notefeature.domain.model.Note
 import ch.kra.noteapp.notefeature.domain.repository.NoteRepository
 import kotlinx.coroutines.channels.Channel
@@ -11,13 +12,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class ListNoteViewModel(
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    private val settingsDataStore: SettingsDataStore
 ): ViewModel() {
 
     val notes: LiveData<List<Note>> = noteRepository.getAllNotes().asLiveData()
 
-    private val _isLinearLayoutSelected = MutableLiveData(true)
-    val isLinearLayoutSelected: LiveData<Boolean> get() = _isLinearLayoutSelected
+    val isLinearLayoutSelected: LiveData<Boolean> = settingsDataStore.layoutManagerFlow.asLiveData()
 
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -36,8 +37,8 @@ class ListNoteViewModel(
                     lastDeletedNote = event.note
                     noteRepository.deleteNote(event.note)
                     sendUIEvent(UIEvent.ShowSnackbar(
-                        message = "Note deleted",
-                        action = "Undo"
+                        message = R.string.note_deleted,
+                        action = R.string.undo
                     ))
                 }
             }
@@ -53,6 +54,12 @@ class ListNoteViewModel(
                    }
                }
             }
+
+            is ListNoteEvent.OnLayoutChanged -> {
+                viewModelScope.launch {
+                    settingsDataStore.saveLayoutToPreferencesStore(event.isLinearLayout)
+                }
+            }
         }
     }
 
@@ -63,11 +70,11 @@ class ListNoteViewModel(
     }
 }
 
-class ListNoteViewModelFactory(private val noteRepository: NoteRepository): ViewModelProvider.Factory {
+class ListNoteViewModelFactory(private val noteRepository: NoteRepository, private val settingsDataStore: SettingsDataStore): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ListNoteViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ListNoteViewModel(noteRepository) as T
+            return ListNoteViewModel(noteRepository, settingsDataStore) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -4,12 +4,16 @@ import android.content.Context
 import androidx.annotation.VisibleForTesting
 import androidx.room.Room
 import ch.kra.noteapp.notefeature.data.local.NoteDatabase
+import ch.kra.noteapp.notefeature.data.preferences.SettingsDataStore
 import ch.kra.noteapp.notefeature.data.repository.NoteRepositoryImpl
 import ch.kra.noteapp.notefeature.domain.repository.NoteRepository
 
 object ServiceLocator {
 
     private var noteDatabase: NoteDatabase? = null
+
+    @Volatile
+    private var settingsDataStore: SettingsDataStore? = null
 
     @Volatile
     var noteRepository: NoteRepository? = null
@@ -38,5 +42,13 @@ object ServiceLocator {
         ).build()
         noteDatabase = newDatabase
         return newDatabase
+    }
+
+    fun provideDataStore(context: Context): SettingsDataStore {
+        return settingsDataStore ?: synchronized(this) {
+            val dataStore = SettingsDataStore(context)
+            settingsDataStore = dataStore
+            dataStore
+        }
     }
 }
